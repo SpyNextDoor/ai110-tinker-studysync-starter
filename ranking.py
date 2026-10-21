@@ -17,7 +17,17 @@ def load_study_spots(csv_path: str) -> list:
     """
     # TODO: use csv.DictReader to read csv_path into a list of dicts.
     # TODO: convert row["distance_miles"] to float and row["seats_available"] to int for each row.
-    raise NotImplementedError
+
+    with open(csv_path, mode="r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+
+        spots = []
+        for row in reader:
+            row["distance_miles"] = float(row["distance_miles"])
+            row["seats_available"] = int(row["seats_available"])
+            spots.append(row)
+        print (spots)
+# print(load_study_spots("data/study_spots.csv"))
 
 
 def score_study_spot(profile: dict, spot: dict) -> tuple:
