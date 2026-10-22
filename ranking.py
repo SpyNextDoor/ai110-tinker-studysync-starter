@@ -26,8 +26,7 @@ def load_study_spots(csv_path: str) -> list:
             row["distance_miles"] = float(row["distance_miles"])
             row["seats_available"] = int(row["seats_available"])
             spots.append(row)
-        print (spots)
-# print(load_study_spots("data/study_spots.csv"))
+        return spots
 
 
 def score_study_spot(profile: dict, spot: dict) -> tuple:
@@ -43,7 +42,38 @@ def score_study_spot(profile: dict, spot: dict) -> tuple:
     # (compare using NOISE_ORDER), distance_miles vs max_distance, and
     # seats_available vs min_seats. Append a short string to `reasons` for
     # each factor that contributed, whether it helped or hurt the score.
-    raise NotImplementedError
+
+    score = 0
+    reasons = []
+
+    noise_level_profile = NOISE_ORDER[profile["max_noise"]]
+    noise_level_spot = NOISE_ORDER[spot["noise_level"]]
+
+    # noise level
+    if noise_level_spot <= noise_level_profile:
+        score += 1
+        reasons.append("quiet enough")
+    else:
+        score -= 1
+        reasons.append("not quiet enough")
+
+    # distance
+    if spot["distance_miles"] <= profile["max_distance"]:
+        score += 1
+        reasons.append("close enough")
+    else:
+        score -= 1
+        reasons.append("far")
+
+    # available seats 
+    if spot["seats_available"] >= profile["min_seats"]:
+        score += 1
+        reasons.append("enough seats")
+    else: 
+        score -= 1
+        reasons.append("insufficient seats")
+
+    return (score, reasons)
 
 
 def rank_study_spots(profile: dict, spots: list, k: int = 3) -> list:
